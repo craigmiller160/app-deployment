@@ -23,6 +23,10 @@ app_deployment:
     oauth2.auth-server-host: https://sso-oauth2-server:8443
     oauth2.client-name: expense-tracker-api
     spring.datasource.db_name: expense_tracker_prod
+  # Will create OnePasswordItems if provided
+  onepassworditems:
+    - name: expense-tracker-api-oauth2-keys
+      itemPath: vaults/Home Server (Prod)/items/Expense Tracker API OAuth2 Keys
   secrets:
     - envVariable: db.postgres.user
       secretName: postgres-root-account
