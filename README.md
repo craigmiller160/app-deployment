@@ -63,4 +63,6 @@ app_deployment:
       name: ThePort
       # Optional, defaults to TCP
       protocol: TCP
+  secure_ingress:
+    # This will configure the secure_ingress lib, see that repo for documentation
 ```
