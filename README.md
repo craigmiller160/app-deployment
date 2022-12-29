@@ -15,8 +15,14 @@ app_deployment:
   deploymentStrategy: Recreate
   # Optional, defaults to 1
   replicas: 1
-  configMaps:
-    - db-backup-service-configmap
+  # Will create ConfigMap if provided
+  configMap:
+    spring.profiles.active: prod
+    spring.datasource.host: postgres.infra-prod
+    spring.datasource.port: "5432"
+    oauth2.auth-server-host: https://sso-oauth2-server:8443
+    oauth2.client-name: expense-tracker-api
+    spring.datasource.db_name: expense_tracker_prod
   secrets:
     - envVariable: db.postgres.user
       secretName: postgres-root-account

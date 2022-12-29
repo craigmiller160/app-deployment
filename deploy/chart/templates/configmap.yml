@@ -1,0 +1,8 @@
+{{- if .Values.configMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.appName }}
+data:
+  # TODO how to apply the config values here?
+{{- end }}

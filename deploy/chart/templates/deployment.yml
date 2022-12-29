@@ -25,9 +25,9 @@ spec:
               protocol: {{ $port.protocol | default "TCP" }}
             {{- end}}
           envFrom:
-            {{- range $configmap := .Values.configMaps  }}
+            {{- if .Values.configMap  }}
             - configMapRef:
-                name: {{ $configmap }}
+                name: {{ .Values.appName }}
             {{- end}}
           env:
             {{- range $secret := .Values.secrets  }}
