@@ -9,7 +9,7 @@ This chart depends on the `secure_ingress` chart, which must be published.
 ## Example Values For Consuming Application
 
 ```yaml
-app-deployment:
+app_deployment:
   appName: db-backup-service
   image: nexus-docker-craigmiller160.ddns.net/db-backup-service:latest
   deploymentStrategy: Recreate
