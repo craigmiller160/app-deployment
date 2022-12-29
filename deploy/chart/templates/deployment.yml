@@ -1,0 +1,97 @@
+{{- range $volume := .Values.volumes }}
+{{- if eq $volume.type "PVC" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $volume.name }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "microk8s-hostpath"
+  resources:
+    requests:
+      storage: 5Gi
+---
+{{- end}}
+{{- end}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicas | default 1 }}
+  strategy:
+    type: {{ .Values.deploymentStrategy | default "Recreate" }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ .Values.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            {{- range $port := .Values.ports }}
+            - name: {{ $port.name | default "port" }}
+              containerPort: {{ $port.containerPort }}
+              protocol: {{ $port.protocol | default "TCP" }}
+            {{- end}}
+          envFrom:
+            {{- range $configmap := .Values.configMaps  }}
+            - configMapRef:
+                name: {{ $configmap }}
+            {{- end}}
+          env:
+            {{- range $secret := .Values.secrets  }}
+            - name: {{ $secret.envVariable }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret.secretName }}
+                  key: {{ $secret.secretKey }}
+            {{- end}}
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{ .Values.livenessProbe | toYaml | trim | nindent 12 }}
+            initialDelaySeconds: 30
+            periodSeconds: 300
+          {{- end}}
+          volumeMounts:
+            {{- range $volume := .Values.volumes }}
+            - mountPath: {{ $volume.deploymentMountPath }}
+              name: {{ $volume.name }}
+            {{- end }}
+      volumes:
+        {{- range $volume := .Values.volumes }}
+        - name: {{ $volume.name }}
+          {{- if eq $volume.type "PVC" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{- else if eq $volume.type "HostPath" }}
+          hostPath:
+            path: {{ $volume.hostPath }}
+          {{- end }}
+        {{- end }}
+---
+{{- if and .Values.ports (gt (len .Values.ports) 0) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appName }}
+spec:
+  type: {{ .Values.serviceType | default "ClusterIP" }}
+  selector:
+    app: {{ .Values.appName }}
+  ports:
+    {{- range $port := .Values.ports }}
+    - port: {{ $port.containerPort }}
+      name: {{ $port.name | default "port" }}
+      targetPort: {{ $port.containerPort }}
+      {{- if $port.nodePort }}
+      nodePort: {{ $port.nodePort }}
+      {{- end }}
+      protocol: {{ $port.protocol | default "TCP" }}
+    {{- end}}
+{{- end}}
