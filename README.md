@@ -63,6 +63,14 @@ app_deployment:
       name: ThePort
       # Optional, defaults to TCP
       protocol: TCP
+  # Optional, will add a resources section if specified
+  resources:
+    limits:
+      cpu: 50m
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
   secure_ingress:
     # This will configure the secure_ingress lib, see that repo for documentation
 ```
