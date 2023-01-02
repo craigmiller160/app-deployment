@@ -44,6 +44,13 @@ spec:
           livenessProbe: {{ .Values.livenessProbe | toYaml | trim | nindent 12 }}
             initialDelaySeconds: 30
             periodSeconds: 300
+            failureThreshold: 3
+          {{- end}}
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{ .Values.readinessProbe | toYaml | trim | nindent 12 }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 10
           {{- end}}
           volumeMounts:
             {{- range $volume := .Values.volumes }}

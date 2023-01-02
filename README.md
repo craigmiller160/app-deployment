@@ -42,6 +42,8 @@ app_deployment:
       path: /actuator/health
       port: 8443
       scheme: HTTPS
+  readinessProbe:
+    # Options are the same as livenessProbe
   volumes:
     # Will create PVC
     - name: volume1
