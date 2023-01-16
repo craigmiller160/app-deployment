@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: {{ .Values.appName }}
+      annotations:
+        checksum/config: {{ .Values.configMap | default "" | sha256sum }}
     spec:
       containers:
         - name: {{ .Values.appName }}
