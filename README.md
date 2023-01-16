@@ -31,7 +31,8 @@ app_deployment:
     - envVariable: db.postgres.user
       secretName: postgres-root-account
       secretKey: username
-  livenessProbe:
+  # Use this if liveness & readiness probes are the same, otherwise use the individual ones
+  commonProbe:
     # Option #1
     exec:
       command:
@@ -42,8 +43,10 @@ app_deployment:
       path: /actuator/health
       port: 8443
       scheme: HTTPS
+  livenessProbe:
+    # Options are the same as commonProbe
   readinessProbe:
-    # Options are the same as livenessProbe
+    # Options are the same as commonProbe
   volumes:
     # Will create PVC
     - name: volume1

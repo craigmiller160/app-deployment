@@ -42,6 +42,16 @@ spec:
                   name: {{ $secret.secretName }}
                   key: {{ $secret.secretKey }}
             {{- end}}
+          {{- if .Values.commonProbe  }}
+          livenessProbe: {{ .Values.commonProbe | toYaml | trim | nindent 12 }}
+            initialDelaySeconds: 30
+            periodSeconds: 300
+            failureThreshold: 3
+          readinessProbe: {{ .Values.commonProbe | toYaml | trim | nindent 12 }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 10
+          {{- end }}
           {{- if .Values.livenessProbe }}
           livenessProbe: {{ .Values.livenessProbe | toYaml | trim | nindent 12 }}
             initialDelaySeconds: 30
