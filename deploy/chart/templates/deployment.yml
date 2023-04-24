@@ -68,6 +68,9 @@ spec:
             {{- range $volume := .Values.volumes }}
             - mountPath: {{ $volume.deploymentMountPath }}
               name: {{ $volume.name }}
+              {{- if eq $volume.type "Secret" }}
+              readOnly: true
+              {{- end }}
             {{- end }}
       volumes:
         {{- range $volume := .Values.volumes }}
@@ -78,5 +81,8 @@ spec:
           {{- else if eq $volume.type "HostPath" }}
           hostPath:
             path: {{ $volume.hostPath }}
+          {{- else if eq $volume.type "Secret" }}
+          secret:
+            secretName: {{ $volume.secretName }}
           {{- end }}
         {{- end }}

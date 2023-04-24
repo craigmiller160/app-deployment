@@ -57,6 +57,11 @@ app_deployment:
       type: HostPath
       hostPath: /otherPath
       deploymentMountPath: /output
+    # Will use a secret, which must be available
+    - name: volume3
+      type: Secret
+      deploymentMountPath: /secret
+      secretName: my-secret
   # Optional, defaults to ClusterIP if not specified
   serviceType: ClusterIP
   # Will create service if specified
