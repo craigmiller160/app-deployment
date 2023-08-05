@@ -7,7 +7,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: "microk8s-hostpath"
+  storageClassName: "craig-hostpath"
   resources:
     requests:
       storage: 5Gi
